@@ -43,7 +43,7 @@ jobs:
           allowDirtyBuild: true
           unityVersion: 2021.3.37f1
           targetPlatform: Android
-          customImage: 'unityci/editor:2021.3.37f1-android-1'
+          customImage: 'unityci/editor:ubuntu-2021.3.37f1-android-3.1.0'
           androidExportType: 'androidPackage'
           androidTargetSdkVersion: '32'
 
