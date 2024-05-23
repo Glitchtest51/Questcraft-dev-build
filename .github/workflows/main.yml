@@ -40,6 +40,7 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
+          allowDirtyBuild: true
           unityVersion: 2021.3.37f1
           targetPlatform: Android
           customImage: 'unityci/editor:2021.3.37f1-android-1'
