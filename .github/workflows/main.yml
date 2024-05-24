@@ -49,12 +49,6 @@ jobs:
           targetPlatform: Android
           # customImage: 'unityci/editor:ubuntu-2021.3.37f1-android-3.1.0'
           androidTargetSdkVersion: '32'
-          AndroidMinSdkVersion: 32
-          androidKeystoreName: user.keystore
-          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
-          androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
 
       - name: Prepare APK for Release
         run: |
