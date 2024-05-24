@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   buildAndroid:
-    name: Build Android
+    name: Build Questcraft
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
           targetPlatform: Android
           androidTargetSdkVersion: '32'
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Build
           path: build
@@ -53,10 +53,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "release-$(date +%Y%m%d%H%M%S)"
-          release_name: "Questcraft-$(date +%Y/%m/%d)"
-          body: "Release for Questcraft-$(date +%Y/%m/%d)"
-          draft: false
-          prerelease: false
+          title: "Questcraft-$(date +%Y/%m/%d)"
+          body: |
+            Release for Questcraft-$(date +%Y/%m/%d)
+
+            there is no guarantee these builds will work.
+            Do not get support for these builds from the questcraft discord.
+            
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -64,6 +67,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/Android/${{ env.APK_NAME }}
-          asset_name: ${{ env.APK_NAME }}
-          asset_content_type: application/zip
+          asset_path: build/Android/${{ env.APK_NAME }}.apk
+          asset_name: ${{ env.APK_NAME }}.apk
+          asset_content_type: application/vnd.android.package-archive
