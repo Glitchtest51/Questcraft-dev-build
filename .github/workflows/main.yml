@@ -46,13 +46,16 @@ jobs:
       #     sudo mv build/Android/*.apk build/Android/${APK_NAME}.apk
       #     echo "APK_NAME=${APK_NAME}.apk" >> $GITHUB_ENV
 
+      - name: test
+        run: echo "v$(date +%Y.%m.%d)"
+        
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2.0.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "v$(date +%Y.%m.%d%H%M%S)"
+          tag_name: "v$(date +%Y.%m.%d)"
           name: "Questcraft-$(date +%Y-%m-%d)"
           make_latest: true
           body: |
