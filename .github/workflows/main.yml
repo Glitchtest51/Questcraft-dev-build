@@ -7,7 +7,7 @@ jobs:
     name: Build Android
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.2.3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           lfs: true
@@ -38,7 +38,7 @@ jobs:
         run:
           unset JAVA_TOOL_OPTIONS
       
-      - uses: game-ci/unity-builder@v4
+      - uses: game-ci/unity-builder@v4.2.3
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
