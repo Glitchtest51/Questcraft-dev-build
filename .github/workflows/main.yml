@@ -52,14 +52,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "release-$(date +%Y%m%d%H%M%S)"
-          release_name: "Questcraft-$(date +%Y/%m/%d)"
+          tag_name: "dev-release"
+          release_name: "Questcraft-$(date +%Y-%m-%d)"
           body: |
-            Release for Questcraft-$(date +%Y/%m/%d)
-
+            Release for Questcraft-$(date +%Y-%m-%d)
+      
             there is no guarantee these builds will work.
             Do not get support for these builds from the questcraft discord.
-            
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
