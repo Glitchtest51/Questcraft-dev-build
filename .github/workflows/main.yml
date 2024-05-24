@@ -64,6 +64,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >-
-          gh release create "v$(date +%Y.%m.%d.%H.%M.%S)"
+          gh release create "v$(date +%Y.%m.%d.%H.%M.%S)" --title "Questcraft-$(date +%Y-%m-%d)"
            # "build/Android/${{ env.APK_NAME }}.apk#${{ env.APK_NAME }}.apk"
-          --title "Questcraft-$(date +%Y-%m-%d)"
