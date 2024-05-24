@@ -51,6 +51,6 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "v$(date +%Y.%m.%d.%H.%M.%S)"
+          automatic_release_tag: v$(date +%Y.%m.%d.%H.%M.%S)
           title: "Questcraft-$(date +%Y-%m-%d)"
           files: build/Android/${{ env.APK_NAME }}.apk
