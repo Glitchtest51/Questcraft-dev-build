@@ -7,7 +7,7 @@ jobs:
     name: Build Android
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.3
         with:
           fetch-depth: 0
           lfs: true
@@ -47,9 +47,14 @@ jobs:
           allowDirtyBuild: true
           unityVersion: 2021.3.37f1
           targetPlatform: Android
-          customImage: 'unityci/editor:ubuntu-2021.3.37f1-android-3.1.0'
-          androidExportType: 'androidPackage'
+          # customImage: 'unityci/editor:ubuntu-2021.3.37f1-android-3.1.0'
           androidTargetSdkVersion: '32'
+          AndroidMinSdkVersion: 32
+          androidKeystoreName: user.keystore
+          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
+          androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
 
       - name: Prepare APK for Release
         run: |
