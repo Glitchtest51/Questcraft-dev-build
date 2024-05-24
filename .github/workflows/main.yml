@@ -12,20 +12,6 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      # - name: Setup env
-      #   run: sudo apt install unzip -y
-
-      # - name: Fetch Pojlib Release
-      #   id: fetch-latest-release-pojlib
-      #   uses: gregziegan/fetch-latest-release@v2.0.0
-      #   with:
-      #     repo_path: QuestCraftPlusPlus/Pojlib
-
-      # - name: Download Pojlib
-      #   run: |
-      #     wget https://github.com/QuestCraftPlusPlus/Pojlib/releases/download/test/lib-release.aar
-      #     cp -f lib-release.aar $GITHUB_WORKSPACE/Assets/Plugins/Android
-
       - uses: actions/cache@v3
         with:
           path: Library
@@ -47,19 +33,18 @@ jobs:
           allowDirtyBuild: true
           unityVersion: 2021.3.37f1
           targetPlatform: Android
-          # customImage: 'unityci/editor:ubuntu-2021.3.37f1-android-3.1.0'
           androidTargetSdkVersion: '32'
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Build
+          path: build
 
       - name: Prepare APK for Release
         run: |
           APK_NAME="Questcraft-$(date +%Y/%m/%d)"
           mv build/Android/*.apk build/Android/${APK_NAME}.apk
           echo "APK_NAME=${APK_NAME}.apk" >> $GITHUB_ENV
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Build-Android
-          path: build/Android
 
       - name: Create GitHub Release
         id: create_release
