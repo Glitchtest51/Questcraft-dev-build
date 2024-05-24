@@ -53,7 +53,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "release-$(date +%Y%m%d%H%M%S)"
-          title: "Questcraft-$(date +%Y/%m/%d)"
+          release_name: "Questcraft-$(date +%Y/%m/%d)"
           body: |
             Release for Questcraft-$(date +%Y/%m/%d)
 
