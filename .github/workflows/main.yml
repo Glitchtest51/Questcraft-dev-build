@@ -48,17 +48,19 @@ jobs:
 
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "release-$(date +%Y%m%d%H%M%S)"
-          release_name: "Questcraft-$(date +%Y-%m-%d)"
+          name: "Questcraft-$(date +%Y-%m-%d)"
+          make_latest: true
           body: |
             Release for Questcraft-$(date +%Y-%m-%d)
-      
-            there is no guarantee these builds will work.
-            Do not get support for these builds from the questcraft discord.
+            
+            There is no guarantee this build will work.
+            Do not get support for these builds from the Questcraft discord.
+          files: build/Android/${{ env.APK_NAME }}.apk
 
       # - name: Upload Release Asset
       #   uses: actions/upload-release-asset@v1
