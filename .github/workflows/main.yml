@@ -12,45 +12,45 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      # - uses: actions/cache@v3
-      #   with:
-      #     path: Library
-      #     key: Library-Android
-      #     restore-keys: Library-
-
-      # - uses: jlumbroso/free-disk-space@v1.3.1
-
-      # - name: unset
-      #   run:
-      #     unset JAVA_TOOL_OPTIONS
-      
-      # - uses: game-ci/unity-builder@v4.2.3
-      #   env:
-      #     UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-      #     UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-      #     UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-      #   with:
-      #     allowDirtyBuild: true
-      #     unityVersion: 2021.3.37f1
-      #     targetPlatform: Android
-      #     androidTargetSdkVersion: '32'
-
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: Build
-      #     path: build
-
-      # - name: Prepare APK for Release
-      #   run: |
-      #     APK_NAME="Questcraft-$(date +%Y-%m-%d)"
-      #     sudo mv build/Android/*.apk build/Android/${APK_NAME}.apk
-      #     echo "APK_NAME=${APK_NAME}.apk" >> $GITHUB_ENV
-
-      - name: Create release
-        uses: marvinpinto/action-automatic-releases@latest
+      - uses: actions/cache@v3
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          automatic_release_tag: v$(date +%Y.%m.%d.%H.%M.%S)
-          title: "Questcraft-$(date +%Y-%m-%d)"
-          files: build/Android/${{ env.APK_NAME }}.apk
+          path: Library
+          key: Library-Android
+          restore-keys: Library-
+
+      - uses: jlumbroso/free-disk-space@v1.3.1
+
+      - name: unset
+        run:
+          unset JAVA_TOOL_OPTIONS
+      
+      - uses: game-ci/unity-builder@v4.2.3
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          allowDirtyBuild: true
+          unityVersion: 2021.3.37f1
+          targetPlatform: Android
+          androidTargetSdkVersion: '32'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Build
+          path: build
+
+      - name: Prepare APK for Release
+        run: |
+          APK_NAME="Questcraft-$(date +%Y-%m-%d)"
+          sudo mv build/Android/*.apk build/Android/${APK_NAME}.apk
+          echo "APK_NAME=${APK_NAME}.apk" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          gh release create "v$(date +%Y.%m.%d.%H.%M.%S)"
+           "build/Android/${{ env.APK_NAME }}.apk#${{ env.APK_NAME }}.apk"
+           --title "Questcraft-$(date +%Y-%m-%d)"
