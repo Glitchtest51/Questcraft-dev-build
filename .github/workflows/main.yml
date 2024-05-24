@@ -46,31 +46,24 @@ jobs:
       #     sudo mv build/Android/*.apk build/Android/${APK_NAME}.apk
       #     echo "APK_NAME=${APK_NAME}.apk" >> $GITHUB_ENV
 
-      - name: Create tag in public repository
-        run: |
-          git tag v$(date +%Y.%m.%d.%H.%M.%S)
-          git push --tags --porcelain
-          
+      # - name: Create Release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ steps.get_tag.outputs.tag }}
+      #     release_name: "Questcraft-$(date +%Y-%m-%d)"
+      #     body: |
+      #       Release for Questcraft-$(date +%Y-%m-%d)
+            
+      #       There is no guarantee this build will work.
+      #       Do not get support for these builds from the Questcraft discord.
+
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.get_tag.outputs.tag }}
-          release_name: "Questcraft-$(date +%Y-%m-%d)"
-          body: |
-            Release for Questcraft-$(date +%Y-%m-%d)
-            
-            There is no guarantee this build will work.
-            Do not get support for these builds from the Questcraft discord.
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/Android/${{ env.APK_NAME }}.apk
-          asset_name: ${{ env.APK_NAME }}.apk
-          asset_content_type: application/vnd.android.package-archive
+        run: >-
+          gh release create "v$(date +%Y.%m.%d.%H.%M.%S)"
+           "build/Android/${{ env.APK_NAME }}.apk#${{ env.APK_NAME }}.apk"
+          --title "Questcraft-$(date +%Y-%m-%d)"
