@@ -43,7 +43,7 @@ jobs:
       - name: Prepare APK for Release
         run: |
           APK_NAME="Questcraft-$(date +%Y-%m-%d)"
-          mv build/Android/*.apk build/Android/${APK_NAME}.apk
+          sudo mv build/Android/*.apk build/Android/${APK_NAME}.apk
           echo "APK_NAME=${APK_NAME}.apk" >> $GITHUB_ENV
 
       - name: Create GitHub Release
