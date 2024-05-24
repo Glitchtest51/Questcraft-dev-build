@@ -23,6 +23,7 @@ jobs:
       - name: unset
         run:
           unset JAVA_TOOL_OPTIONS
+          export GH_TOKEN=${{ secrets.GITHUB_TOKEN }}
       
       - uses: game-ci/unity-builder@v4.2.3
         env:
