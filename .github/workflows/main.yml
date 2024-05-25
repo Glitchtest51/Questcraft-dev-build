@@ -45,6 +45,7 @@ jobs:
           APK_NAME="Questcraft-$(date +%Y-%m-%d)"
           sudo mv build/Android/*.apk build/Android/${APK_NAME}.apk
           echo "TAG=v$(date +%Y.%m.%d.%H.%M.%S)" >> $GITHUB_ENV
+          echo "NAME=Questcraft-v$(date +%Y-%m-%d)" >> $GITHUB_ENV
 
       - name: Create release
         uses: marvinpinto/action-automatic-releases@latest
@@ -52,5 +53,5 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           automatic_release_tag: ${{ env.TAG }}
-          title: Questcraft-$(date +%Y-%m-%d)
+          title: ${{ env.NAME }}
           files: build/Android/*.apk
