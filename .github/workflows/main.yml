@@ -50,7 +50,7 @@ jobs:
       - name: Create Release
         id: create_release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >-
           sudo gh release create "v$(date +%Y.%m.%d.%H.%M.%S)"
            "build/Android/${{ env.APK_NAME }}"
