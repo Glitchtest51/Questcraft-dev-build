@@ -23,7 +23,6 @@ jobs:
       - name: unset
         run:
           unset JAVA_TOOL_OPTIONS
-          export GH_TOKEN=${{ secrets.GITHUB_TOKEN }}
       
       - uses: game-ci/unity-builder@v4.2.3
         env:
@@ -52,6 +51,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >-
+          sudo export GH_TOKEN=${{ secrets.GITHUB_TOKEN }}
           sudo gh release create "v$(date +%Y.%m.%d.%H.%M.%S)"
            "build/Android/${{ env.APK_NAME }}"
            --title "Questcraft-$(date +%Y-%m-%d)"
