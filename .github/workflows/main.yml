@@ -40,17 +40,17 @@ jobs:
           name: Build
           path: build
 
-      - name: Prepare APK for Release
+      - name: Prepare for Release
         run: |
           APK_NAME="Questcraft-$(date +%Y-%m-%d)"
           sudo mv build/Android/*.apk build/Android/${APK_NAME}.apk
-          echo "APK_NAME=${APK_NAME}.apk" >> $GITHUB_ENV
+          echo "TAG=v$(date +%Y.%m.%d.%H.%M.%S)" >> $GITHUB_ENV
 
       - name: Create release
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: v$(date +%Y.%m.%d.%H.%M.%S)
+          automatic_release_tag: ${{ env.TAG }}
           title: Questcraft-$(date +%Y-%m-%d)
           files: build/Android/*.apk
