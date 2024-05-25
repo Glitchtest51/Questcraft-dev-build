@@ -33,7 +33,11 @@ jobs:
           allowDirtyBuild: true
           unityVersion: 2021.3.37f1
           targetPlatform: Android
-          androidTargetSdkVersion: '32'
+          androidTargetSdkVersion: '32'  
+          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
+          androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
 
       - uses: actions/upload-artifact@v4
         with:
