@@ -1,6 +1,14 @@
 name: Build Android Project
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: '0 0 * * 0'
 
 jobs:
   buildAndroid:
