@@ -31,7 +31,11 @@ jobs:
       - name: unset
         run:
           unset JAVA_TOOL_OPTIONS
-      
+
+      - name: Replace androidUseCustomKeystore value
+        run: |
+          sed -i 's/androidUseCustomKeystore: 1/androidUseCustomKeystore: 0/' ProjectSettings/ProjectSettings.asset
+
       - uses: game-ci/unity-builder@v4.2.3
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
