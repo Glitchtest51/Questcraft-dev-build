@@ -12,8 +12,8 @@ using UnityEngine.UI;
 
 public class InstanceManager : MonoBehaviour
 {
-    [SerializeField] private GameObject instanceArray;
-    [SerializeField] private GameObject instancePrefab;
+    [SerializeField] private GameObject instanceArrayIM;
+    [SerializeField] private GameObject instancePrefabIM;
     [SerializeField] private TextMeshProUGUI instanceVersion;
     [SerializeField] private TextMeshProUGUI instanceTitle;
     [SerializeField] private RawImage instanceImage;
@@ -21,6 +21,7 @@ public class InstanceManager : MonoBehaviour
     public TMP_InputField instanceName;
     public Toggle defaultModsToggle;
     public TMP_Dropdown versionDropdown;
+    public TMP_Dropdown loaderDropdown;
     public WindowHandler windowHandler;
     public Texture2D errorTexture;
 
@@ -29,11 +30,33 @@ public class InstanceManager : MonoBehaviour
     [SerializeField] private GameObject modArray;
     [SerializeField] private APIHandler apiHandler;
     
+    public void Start()
+    {
+        List<string> modLoaders = new List<string>
+        {
+            "Fabric",
+            "Forge",
+            "Quilt",
+            "NeoForge"
+        };
+        
+        loaderDropdown.AddOptions(modLoaders);
+        CreateInstanceArray();
+    }
     
+    public void UpdateMenu()
+    {
+        string selectedModloader = loaderDropdown.options[loaderDropdown.value].text;
+        defaultModsToggle.interactable = selectedModloader is "Fabric" or "Quilt";
+        defaultModsToggle.isOn = selectedModloader is "Fabric" or "Quilt";
+    }
+
     public void CreateCustomInstance()
     {
         try
         {
+            string selectedModloader = loaderDropdown.options[loaderDropdown.value].text;
+
             instanceName.text = instanceName.text.Trim();
             if (instanceName.text == "")
             {
@@ -47,7 +70,7 @@ public class InstanceManager : MonoBehaviour
 
             if (instanceNames.Add(instanceName.text.ToLower()))
             {
-                JNIStorage.apiClass.CallStatic<AndroidJavaObject>("createNewInstance", JNIStorage.activity, JNIStorage.instancesObj, instanceName.text, defaultModsToggle.isOn, versionDropdown.options[versionDropdown.value].text, null);
+                JNIStorage.apiClass.CallStatic<AndroidJavaObject>("createNewInstance", JNIStorage.activity, JNIStorage.instancesObj, instanceName.text, defaultModsToggle.isOn, versionDropdown.options[versionDropdown.value].text, selectedModloader, null);
                 JNIStorage.instance.uiHandler.SetAndShowError(instanceName.text + " is now being created.");
             
                 JNIStorage.instance.UpdateInstances();
@@ -71,10 +94,9 @@ public class InstanceManager : MonoBehaviour
             async Task SetInstanceData()
             {
                 PojlibInstance instance = PojlibInstance.Parse(instanceObj);
-                GameObject instanceGameObject = Instantiate(instancePrefab, new Vector3(-10, -10, -10), Quaternion.identity);
-                instanceGameObject.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = instance.instanceName;
-                instanceGameObject.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = instance.versionName + " - Fabric";
-                instanceGameObject.transform.SetParent(instanceArray.transform, false);
+                GameObject instanceGameObject = Instantiate(instancePrefabIM, new Vector3(-10, -10, -10), Quaternion.identity);
+                instanceGameObject.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = instance.instanceName; instanceGameObject.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = instance.versionName + " - Fabric";
+                instanceGameObject.transform.SetParent(instanceArrayIM.transform, false);
                 instanceGameObject.name = instance.instanceName;
 
                 instanceGameObject.GetComponent<Button>().onClick.AddListener(delegate
@@ -83,21 +105,23 @@ public class InstanceManager : MonoBehaviour
                     GameObject instanceObject = GameObject.Find(EventSystem.current.currentSelectedGameObject.transform.name);
                     CreateInstanceInfoPage(instanceObject.name);
                 });
-                
+
                 if (instance.instanceImageURL != null)
+                {
                     apiHandler.DownloadImage(instance.instanceImageURL, instanceGameObject.GetComponentInChildren<RawImage>());
+                }
             }
             SetInstanceData();
         }
 
-        if (instanceArray.transform.childCount == 0)
+        if (instanceArrayIM.transform.childCount == 0)
         {
-            GameObject instanceGameObject = Instantiate(instancePrefab, new Vector3(-10, -10, -10), Quaternion.identity);
+            GameObject instanceGameObject = Instantiate(instancePrefabIM, new Vector3(-10, -10, -10), Quaternion.identity);
             instanceGameObject.GetComponentInChildren<RawImage>().texture = errorTexture;
             instanceGameObject.GetComponentInChildren<RawImage>().color = Color.yellow;
             instanceGameObject.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "No instances could be found!";
             instanceGameObject.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = "Make sure you have an instance downloaded.";
-            instanceGameObject.transform.SetParent(instanceArray.transform, false);
+            instanceGameObject.transform.SetParent(instanceArrayIM.transform, false);
             instanceGameObject.name = "ERROR";
         }
     }
@@ -221,9 +245,9 @@ public class InstanceManager : MonoBehaviour
 
     private void ResetArray()
     {
-        for (int i = instanceArray.transform.childCount - 1; i >= 0; i--)
+        for (int i = instanceArrayIM.transform.childCount - 1; i >= 0; i--)
         {
-            Destroy(instanceArray.transform.GetChild(i).gameObject);
+            Destroy(instanceArrayIM.transform.GetChild(i).gameObject);
         }
     }
 }

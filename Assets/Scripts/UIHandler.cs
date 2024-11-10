@@ -19,10 +19,14 @@ public class UIHandler : MonoBehaviour
     public Toggle modToggle;
     public Toggle modpacksToggle;
     public Toggle resourcePacksToggle;
+    public Button modsButton;
+    public Button instancesButton;
+    public Button playButton;
     public static int selectedInstance;
     static string pfpUrl;
     static string profileName;
 
+    public LoginHandler loginHandler;
     public ModManager modManager;
 
     void Start()
@@ -61,15 +65,31 @@ public class UIHandler : MonoBehaviour
         minuteHourText.text = time;
     }
 
-    public static async Task GetName(TextMeshProUGUI profileNameHolder)
+    public void UILoginCheck(bool isDemoMode)
     {
-        if (JNIStorage.accountObj != null)
+        if (loginHandler.selectedAccountUsername != null && loginHandler.selectedAccountUsername != "Add Account" && !isDemoMode)
         {
-            profileName ??= JNIStorage.apiClass.GetStatic<string>("profileName");
-            profileNameHolder.text = profileName;
+            dropdownMain.interactable = true;
+            modsButton.interactable = true;
+            instancesButton.interactable = true;
+            playButton.interactable = true;
+        }
+        else if (loginHandler.selectedAccountUsername == "Add Account")
+        {
+            dropdownMain.interactable = false;
+            modsButton.interactable = false;
+            instancesButton.interactable = false;
+            playButton.interactable = false;
+        }
+        else if (loginHandler.selectedAccountUsername != null && isDemoMode)
+        {
+            dropdownMain.interactable = false;
+            modsButton.interactable = false;
+            instancesButton.interactable = false;
+            playButton.interactable = true;
         }
     }
-
+    
     void OnToggleClicked(bool value, Toggle clickedToggle)
     {
         if (modManager.isSearching)
