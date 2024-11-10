@@ -43,6 +43,8 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           allowDirtyBuild: true
+          targetPlatform: Android
+          customImage: 'unityci/editor:windows-2021.3.37f1-android-3.1.0'
           unityVersion: 2021.3.45f1
           targetPlatform: Android
           androidTargetSdkVersion: '32'  
