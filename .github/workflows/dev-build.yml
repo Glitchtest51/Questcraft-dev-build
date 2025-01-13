@@ -1,0 +1,72 @@
+name: Build Android Project
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  buildAndroid:
+    name: Build Questcraft
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-Android
+          restore-keys: Library-
+
+      - uses: jlumbroso/free-disk-space@v1.3.1
+
+      - name: unset
+        run:
+          unset JAVA_TOOL_OPTIONS
+
+      - name: Replace androidUseCustomKeystore value
+        run: |
+          sed -i 's/androidUseCustomKeystore: 1/androidUseCustomKeystore: 0/' ProjectSettings/ProjectSettings.asset
+
+      - uses: game-ci/unity-builder@v4.2.3
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          allowDirtyBuild: true
+          targetPlatform: Android
+          unityVersion: 2021.3.45f1
+          androidTargetSdkVersion: '32'  
+          androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          androidKeyaliasName: ${{ secrets.ANDROID_KEYALIAS_NAME }}
+          androidKeyaliasPass: ${{ secrets.ANDROID_KEYALIAS_PASS }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Build
+          path: build
+
+      - name: Prepare for Release
+        run: |
+          APK_NAME="Questcraft-$(date +%Y-%m-%d)"
+          sudo mv build/Android/*.apk build/Android/${APK_NAME}.apk
+          echo "TAG=v$(date +%Y.%m.%d.%H.%M.%S)" >> $GITHUB_ENV
+          echo "NAME=Questcraft-v$(date +%Y-%m-%d)" >> $GITHUB_ENV
+      - name: Create release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: ${{ env.TAG }}
+          title: ${{ env.NAME }}
+          files: build/Android/*.apk
