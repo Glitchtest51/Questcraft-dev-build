@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class InstanceButton : MonoBehaviour
     private bool hasDefaulted;
     public ConfigHandler.Config config;
     public string configPath;
-
+    public UIHandler uiHandler;
     public CanvasGroup ScreenFade;
     
     public void Update()
@@ -44,6 +45,13 @@ public class InstanceButton : MonoBehaviour
         if (JNIStorage.GetInstance(currInstName) == null)
         {
             Debug.Log("Instance is null!");
+
+            if (!JNIStorage.CheckConnectionAndThrow())
+            {
+                uiHandler.SetAndShowError("Unable to contact Microsoft servers, unable to create this instance!");
+                return;
+            }
+            
             CreateDefaultInstance(currInstName);
             return;
         }
@@ -58,16 +66,23 @@ public class InstanceButton : MonoBehaviour
             JNIStorage.instance.uiHandler.SetAndShowError(currInstName + " is still installing, please wait until the install has finished.");
             return; 
         }
-        
-        async Task FinishAnim()
+
+        if (!OpenXRFeatureSystemInfo.GetHeadsetName().Contains("PICO"))
         {
-            await Task.Delay(200);
-            XRGeneralSettings.Instance.Manager.activeLoader.Stop();
-            XRGeneralSettings.Instance.Manager.activeLoader.Deinitialize();
-            
-            Application.Quit();
-            JNIStorage.apiClass.CallStatic("launchInstance", JNIStorage.activity, JNIStorage.accountObj, instance.raw);
+            Task.Run(() =>
+            {
+                AndroidJNI.AttachCurrentThread();
+                JNIStorage.apiClass.CallStatic("launchInstance", JNIStorage.activity, JNIStorage.accountObj,
+                    instance.raw);
+            });
         }
-        LeanTween.value(ScreenFade.gameObject,0, 1, 1).setOnUpdate(alpha => ScreenFade.alpha = alpha).setOnComplete(() => FinishAnim());
+        else
+        {
+            Application.Unload();
+            JNIStorage.apiClass.CallStatic("launchInstance", JNIStorage.activity, JNIStorage.accountObj,
+                instance.raw);
+        }
+
+        JNIStorage.instance.uiHandler.SetAndShowError("Instance is now launching, please wait... (Game will switch automatically when ready)");
     }
 }
