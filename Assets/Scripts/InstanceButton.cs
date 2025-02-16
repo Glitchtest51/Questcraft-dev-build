@@ -45,44 +45,24 @@ public class InstanceButton : MonoBehaviour
         if (JNIStorage.GetInstance(currInstName) == null)
         {
             Debug.Log("Instance is null!");
-
-            if (!JNIStorage.CheckConnectionAndThrow())
-            {
-                uiHandler.SetAndShowError("Unable to contact Microsoft servers, unable to create this instance!");
-                return;
-            }
             
             CreateDefaultInstance(currInstName);
             return;
         }
 
         PojlibInstance instance = JNIStorage.GetInstance(currInstName);
-        bool finishedDownloading = JNIStorage.apiClass.GetStatic<bool>("finishedDownloading");
-
         instance.raw.Call("updateMods", JNIStorage.instancesObj);
-        
-        if (!finishedDownloading)
-        { 
-            JNIStorage.instance.uiHandler.SetAndShowError(currInstName + " is still installing, please wait until the install has finished.");
-            return; 
+
+        async Task FinishAnim()
+        {
+            await Task.Delay(200);
+            XRGeneralSettings.Instance.Manager.activeLoader.Stop();
+            XRGeneralSettings.Instance.Manager.activeLoader.Deinitialize();
+            
+            Application.Quit();
+            JNIStorage.apiClass.CallStatic("launchInstance", JNIStorage.activity, JNIStorage.accountObj, instance.raw);
         }
 
-        if (!OpenXRFeatureSystemInfo.GetHeadsetName().Contains("PICO"))
-        {
-            Task.Run(() =>
-            {
-                AndroidJNI.AttachCurrentThread();
-                JNIStorage.apiClass.CallStatic("launchInstance", JNIStorage.activity, JNIStorage.accountObj,
-                    instance.raw);
-            });
-        }
-        else
-        {
-            Application.Unload();
-            JNIStorage.apiClass.CallStatic("launchInstance", JNIStorage.activity, JNIStorage.accountObj,
-                instance.raw);
-        }
-
-        JNIStorage.instance.uiHandler.SetAndShowError("Instance is now launching, please wait... (Game will switch automatically when ready)");
+        LeanTween.value(ScreenFade.gameObject,0, 1, 1).setOnUpdate(alpha => ScreenFade.alpha = alpha).setOnComplete(() => FinishAnim());
     }
 }
