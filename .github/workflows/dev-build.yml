@@ -1,12 +1,13 @@
 name: Build Android Project
 
 on:
+  workflow_dispatch:
   push:
     branches:
-      - master
+      - PicoCraft
   pull_request:
     branches:
-      - master
+      - PicoCraft
   schedule:
     - cron: '0 0 * * 0'
 
