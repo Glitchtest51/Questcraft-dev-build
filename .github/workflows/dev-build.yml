@@ -44,7 +44,7 @@ jobs:
         with:
           allowDirtyBuild: true
           targetPlatform: Android
-          unityVersion: 2021.3.45f1
+          unityVersion: 2022.3.60f1
           androidTargetSdkVersion: '32'  
           androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
