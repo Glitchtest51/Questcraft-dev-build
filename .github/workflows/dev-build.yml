@@ -36,7 +36,7 @@ jobs:
         run: |
           sed -i 's/androidUseCustomKeystore: 1/androidUseCustomKeystore: 0/' ProjectSettings/ProjectSettings.asset
 
-      - uses: game-ci/unity-builder@v4.2.3
+      - uses: game-ci/unity-builder@v4.4.0
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -44,7 +44,7 @@ jobs:
         with:
           allowDirtyBuild: true
           targetPlatform: Android
-          unityVersion: 2022.3.60f1
+          # unityVersion: 2022.3.60f1
           androidTargetSdkVersion: '32'  
           androidKeystoreBase64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           androidKeystorePass: ${{ secrets.ANDROID_KEYSTORE_PASS }}
