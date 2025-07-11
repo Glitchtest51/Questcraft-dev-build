@@ -1,0 +1,56 @@
+name: sync_upstream
+
+on:
+  schedule:
+    - cron: '0 3 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/QuestCraftPlusPlus/QCXR-XR-Wrapper.git
+
+      - name: Fetch upstream changes
+        run: git fetch upstream
+
+      - name: Merge upstream/master into fork/master
+        id: merge
+        run: |
+          git checkout master
+          git merge upstream/master --no-edit || echo "conflict" > .conflict
+
+      - name: Check for merge conflicts
+        id: check_conflict
+        run: |
+          if [ -f .conflict ]; then
+            echo "conflict=true" >> $GITHUB_OUTPUT
+          else
+            echo "conflict=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push changes to fork
+        if: steps.check_conflict.outputs.conflict == 'false'
+        env:
+          PAT: ${{ secrets.PAT }}
+        run: |
+          git push https://x-access-token:${PAT}@github.com/${{ github.repository }} master
+
+      - name: Create conflict issue
+        if: steps.check_conflict.outputs.conflict == 'true'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "⚠️ Merge Conflict with Upstream"
+          content-filepath: .github/conflict-template.md
+          labels: merge-conflict
